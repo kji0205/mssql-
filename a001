@@ -1,0 +1,66 @@
+
+/*
+	IF OBJECT_ID(N'dbo.usp_GetErrorInfo') IS NOT NULL   
+	BEGIN
+		DROP PROCEDURE usp_GetErrorInfo;
+	END
+
+	CREATE PROCEDURE dbo.usp_GetErrorInfo  
+	AS  
+	SELECT  
+		ERROR_NUMBER() AS ErrorNumber  
+		,ERROR_SEVERITY() AS ErrorSeverity  
+		,ERROR_STATE() AS ErrorState  
+		,ERROR_PROCEDURE() AS ErrorProcedure  
+		,ERROR_LINE() AS ErrorLine  
+		,ERROR_MESSAGE() AS ErrorMessage;  
+	GO
+*/
+
+/*
+	
+
+	IF OBJECT_ID(N'Board2', N'U') IS NOT NULL   
+	BEGIN
+		DROP TABLE Board2;
+	END
+
+	CREATE TABLE [dbo].[Board2](
+		[seq] [int] IDENTITY(1,1) NOT NULL,
+		[refer] [int] NOT NULL,
+		[depth] [int] NOT NULL,
+		[step] [int] NOT NULL,
+		[title] [varchar](50) NOT NULL,
+		[content] [text] NOT NULL,
+		[createDate] [datetime] NOT NULL CONSTRAINT [DF_Board2_createDate]  DEFAULT (getdate()),
+		[updateDate] [datetime] NOT NULL CONSTRAINT [DF_Board2_updateDate]  DEFAULT (getdate()),
+	 CONSTRAINT [PK_Board2] PRIMARY KEY CLUSTERED 
+	(
+		[seq] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+  
+	DELETE FROM Board2
+	DBCC checkident ('Board2', reseed, 1)
+	SELECT IDENT_CURRENT( 'Board2' ) 
+*/
+
+DECLARE @Loop INT = 5
+WHILE @Loop > 0 
+BEGIN
+	INSERT INTO Board2(	refer	,depth	,step	,title	,content	,createDate)
+		VALUES (	IDENT_CURRENT( 'Board2' )	,1	, 1,'title' + cast(IDENT_CURRENT( 'Board2')  AS varchar(10))	,'content'	 + cast(IDENT_CURRENT( 'Board2')  AS varchar(10)), GETDATE())
+	SET @Loop = @Loop - 1
+END
+-- SELECT * FROM Board2
+
+-- 답글을 달려면? - 원본 글의 번호를 알아야함.
+INSERT INTO Board2(	ref	,depth	,step	,title	,content	,createDate)
+	VALUES (	4	,2	,1	,'-title'	,'content'	,GETDATE())
+INSERT INTO Board2(	ref	,depth	,step	,title	,content	,createDate)
+	VALUES (	4	,3	,1	,'--title'	,'content'	,GETDATE())
+INSERT INTO Board2(	ref	,depth	,step	,title	,content	,createDate)
+	VALUES (	4	,3	,2	,'--title'	,'content'	,GETDATE())
+
+SELECT * FROM Board2
+ORDER BY ref DESC, depth ASC, step DESC
